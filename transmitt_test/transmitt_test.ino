@@ -75,10 +75,9 @@ void send_ir_code(char serial_input) {
 void setup() {
   Serial.begin(115200);  // todo: try Serial.begin(115200, SERIAL_8N1);
   irsend.begin();
-  int delayDuration = 50; // Define the delay duration
-  delay(delayDuration);
+  int delayDuration = 100; // Define the delay duration
   send_ir_code('o');
-  delay(delayDuration);
+  delay(1500);
   send_ir_code('l');
   delay(delayDuration);
   send_ir_code('a');
