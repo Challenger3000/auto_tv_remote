@@ -88,10 +88,11 @@ void setup() {
   delay(delayDuration);
   send_ir_code('d');
   delay(delayDuration);
-  send_ir_code('e');
+  send_ir_code('r');
 
 }
 
 void loop() {
-  
+  Serial.println("deep sleep");
+    ESP.deepSleep(30e6); 
 }
