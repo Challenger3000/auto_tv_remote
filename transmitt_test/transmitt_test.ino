@@ -1,8 +1,20 @@
+
+
 #include <Arduino.h>
 
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 #include <ir_Samsung.h>
+ 
+// eeprom
+#define EEPROM_SIZE 150
+#include <EEPROM.h>
+int address = 100;
+int state = 0;
+
+int cycleaddres = 90;
+int cycles = 1;
+
 
   const uint16_t kSendPin = 4;  // GPIO with IR LED
   const int kTransmissionDelay = 100;   // Delay duration after IR command
@@ -74,6 +86,26 @@ void send_ir_code(char serial_input) {
 
 void setup() {
   Serial.begin(115200);  // todo: try Serial.begin(115200, SERIAL_8N1);
+  Serial.println(F("Initialize System"));
+  EEPROM.begin(EEPROM_SIZE);
+
+
+  
+  
+  EEPROM.get(address, state);
+  Serial.print("Read status = ");
+  Serial.println(state);
+
+
+  EEPROM.get(cycleaddres, cycles);
+  Serial.print("Write cycles = ");
+  Serial.println(cycles);
+  cycles++;
+  EEPROM.put(cycleaddres, cycles);
+  EEPROM.commit();
+
+
+
   irsend.begin();
   int delayDuration = 100; // Define the delay duration
   send_ir_code('o');
@@ -85,10 +117,26 @@ void setup() {
   send_ir_code('a');
   delay(delayDuration);
   send_ir_code('a');
+
+  if(state == 0){
+    delay(delayDuration);
+    send_ir_code('d');
+  }
+
   delay(delayDuration);
-  send_ir_code('d');
+  send_ir_code('e');
   delay(delayDuration);
   send_ir_code('r');
+
+  if (state < 1) {
+    state = 1;
+  }else if (state > 0){
+    state = 0;
+  }
+  EEPROM.put(address, state);
+  EEPROM.commit();
+  Serial.print("new state writen to eeprom: ");
+  Serial.println(state);
 
 }
 
